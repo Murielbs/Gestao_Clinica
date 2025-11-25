@@ -1,47 +1,18 @@
-import express, { Request, Response } from 'express';
-import prisma from '../prisma';
+import express from 'express';
+import {
+  listDocumentos,
+  getDocumento,
+  createDocumento,
+  updateDocumento,
+  deleteDocumento,
+} from '../controllers/documentoController';
 
 const router = express.Router();
 
-router.get('/', async (_req: Request, res: Response) => {
-  const items = await prisma.documento.findMany();
-  res.json(items);
-});
-
-router.get('/:id', async (req: Request, res: Response) => {
-  const id = Number(req.params.id);
-  const item = await prisma.documento.findUnique({ where: { DocumentoID: id } });
-  if (!item) return res.status(404).json({ error: 'Documento não encontrado' });
-  res.json(item);
-});
-
-router.post('/', async (req: Request, res: Response) => {
-  try {
-    const created = await prisma.documento.create({ data: req.body });
-    res.status(201).json(created);
-  } catch (err: any) {
-    res.status(400).json({ error: err.message });
-  }
-});
-
-router.put('/:id', async (req: Request, res: Response) => {
-  const id = Number(req.params.id);
-  try {
-    const updated = await prisma.documento.update({ where: { DocumentoID: id }, data: req.body });
-    res.json(updated);
-  } catch (err: any) {
-    res.status(400).json({ error: err.message });
-  }
-});
-
-router.delete('/:id', async (req: Request, res: Response) => {
-  const id = Number(req.params.id);
-  try {
-    await prisma.documento.delete({ where: { DocumentoID: id } });
-    res.status(204).end();
-  } catch (err: any) {
-    res.status(400).json({ error: err.message });
-  }
-});
+router.get('/', listDocumentos);
+router.get('/:id', getDocumento);
+router.post('/', createDocumento);
+router.put('/:id', updateDocumento);
+router.delete('/:id', deleteDocumento);
 
 export default router;

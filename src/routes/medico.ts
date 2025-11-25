@@ -1,47 +1,18 @@
-import express, { Request, Response } from 'express';
-import prisma from '../prisma';
+import express from 'express';
+import {
+  listMedicos,
+  getMedico,
+  createMedico,
+  updateMedico,
+  deleteMedico,
+} from '../controllers/medicoController';
 
 const router = express.Router();
 
-router.get('/', async (_req: Request, res: Response) => {
-  const medicos = await prisma.medico.findMany();
-  res.json(medicos);
-});
-
-router.get('/:id', async (req: Request, res: Response) => {
-  const id = Number(req.params.id);
-  const medico = await prisma.medico.findUnique({ where: { MedicoID: id } });
-  if (!medico) return res.status(404).json({ error: 'Médico não encontrado' });
-  res.json(medico);
-});
-
-router.post('/', async (req: Request, res: Response) => {
-  try {
-    const created = await prisma.medico.create({ data: req.body });
-    res.status(201).json(created);
-  } catch (err: any) {
-    res.status(400).json({ error: err.message });
-  }
-});
-
-router.put('/:id', async (req: Request, res: Response) => {
-  const id = Number(req.params.id);
-  try {
-    const updated = await prisma.medico.update({ where: { MedicoID: id }, data: req.body });
-    res.json(updated);
-  } catch (err: any) {
-    res.status(400).json({ error: err.message });
-  }
-});
-
-router.delete('/:id', async (req: Request, res: Response) => {
-  const id = Number(req.params.id);
-  try {
-    await prisma.medico.delete({ where: { MedicoID: id } });
-    res.status(204).end();
-  } catch (err: any) {
-    res.status(400).json({ error: err.message });
-  }
-});
+router.get('/', listMedicos);
+router.get('/:id', getMedico);
+router.post('/', createMedico);
+router.put('/:id', updateMedico);
+router.delete('/:id', deleteMedico);
 
 export default router;

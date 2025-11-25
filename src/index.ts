@@ -8,6 +8,7 @@ import consultaRouter from './routes/consulta';
 import diagnosticoRouter from './routes/diagnostico';
 import testeRouter from './routes/testeAplicado';
 import documentoRouter from './routes/documento';
+import authRouter from './routes/auth';
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use('/pacientes', pacienteRouter);
 app.use('/medicos', medicoRouter);
 app.use('/prontuarios', prontuarioRouter);
 app.use('/consultas', consultaRouter);
+app.use('/auth', authRouter);
 app.use('/diagnosticos', diagnosticoRouter);
 app.use('/testes', testeRouter);
 app.use('/documentos', documentoRouter);
