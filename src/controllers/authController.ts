@@ -12,14 +12,14 @@ export async function login(req: Request, res: Response) {
     const medico = Array.isArray(rows) ? rows[0] : rows;
     if (!medico) return res.status(401).json({ error: 'Credenciais inválidas' });
 
-    const stored: string | undefined = medico.Senha ?? medico.senha ?? medico.Password ?? medico.password;
-    if (!stored) return res.status(500).json({ error: 'Senha não encontrada para o usuário' });
+    const storedPassword = medico.Senha || medico.senha || medico.Password || medico.password;
+    if (!storedPassword) return res.status(500).json({ error: 'Senha não encontrada para o usuário' });
 
     let passwordMatch = false;
-    if (typeof stored === 'string' && (stored.startsWith('$2a$') || stored.startsWith('$2b$') || stored.startsWith('$2y$'))) {
-      passwordMatch = await bcrypt.compare(senha, stored);
+    if (typeof storedPassword === 'string' && (storedPassword.startsWith('$2a$') || storedPassword.startsWith('$2b$') || storedPassword.startsWith('$2y$'))) {
+      passwordMatch = await bcrypt.compare(senha, storedPassword);
     } else {
-      passwordMatch = senha === stored;
+      passwordMatch = senha === storedPassword;
     }
 
     if (!passwordMatch) return res.status(401).json({ error: 'Credenciais inválidas' });
@@ -27,7 +27,9 @@ export async function login(req: Request, res: Response) {
     const secret = process.env.JWT_SECRET || 'dev-secret';
     const token = jwt.sign({ medicoId: medico.MedicoID, email: medico.Email }, secret, { expiresIn: '8h' });
 
-    res.json({ token, medico: { MedicoID: medico.MedicoID, NomeCompleto: medico.NomeCompleto, Email: medico.Email } });
+    const { Senha, senha: s, Password, password, ...medicoSemSenha } = medico;
+
+    res.json({ token, medico: medicoSemSenha });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }

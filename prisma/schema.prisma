@@ -29,6 +29,7 @@ model Medico {
   NomeCompleto String
   CRM         String      @unique
   Email       String      @unique
+  Senha       String
   Telefone    String?
   Especialidade String?
 
