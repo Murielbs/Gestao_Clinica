@@ -1,5 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import bodyParser from 'body-parser';
+import cors from 'cors';
 import dotenv from 'dotenv';
 import pacienteRouter from './routes/paciente';
 import medicoRouter from './routes/medico';
@@ -14,6 +15,7 @@ dotenv.config();
 
 const app = express();
 app.use(bodyParser.json());
+app.use(cors());
 
 app.get('/health', (_req: Request, res: Response) => res.json({ status: 'ok' }));
 
